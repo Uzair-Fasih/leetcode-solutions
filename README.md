@@ -1,5 +1,6 @@
 # leetcode-solutions
 My repository of leetcode solutions.
+My LeetCode Profile: https://leetcode.com/uzairfassi/
 
 My goal is to solve at least one `LC Hard` a day.
 Most of my solutions have comments explaining the strategy.
