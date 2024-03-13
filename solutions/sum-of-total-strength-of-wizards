@@ -1,0 +1,65 @@
+from typing import List
+mod = 10 ** 9 + 7
+
+class Solution:
+  def totalStrength(self, strength: List[int]) -> int:
+    left, leftc = [*strength], [1] * len(strength)
+    leftp, stack = [0] * len(strength), []
+    
+    for idx, n in enumerate(strength):
+
+      s, count = [idx], 1
+      while stack and strength[stack[-1]] >= n: 
+        jdx = stack.pop()
+        count += leftc[jdx]
+        s.append(jdx)
+      
+      curr_count = count
+      score, scorep = 0, 0
+      
+      for jdx in s:
+        count = count - leftc[jdx]
+        sz = count + 1
+        
+        score += (left[jdx] * sz) - (leftp[jdx] * (sz - 1))
+        scorep += max(0, (left[jdx] * (sz - 1)) - (leftp[jdx] * (sz - 2)))
+
+      left[idx], leftc[idx] = score, curr_count
+      leftp[idx] = scorep
+      stack.append(idx)
+
+    right, rightc = [*strength], [1] * len(strength)
+    rightp, stack = [0] * len(strength), []
+    
+    idx = len(strength) - 1
+    for n in reversed(strength):
+      
+      s, count = [idx], 1
+      while stack and strength[stack[-1]] > n: 
+        jdx = stack.pop()
+        count += rightc[jdx]
+        s.append(jdx)
+      
+      curr_count = count
+      score, scorep = 0, 0
+
+      for jdx in s:
+        count = count - rightc[jdx]
+        sz = count + 1
+        score += (right[jdx] * sz) - (rightp[jdx] * (sz - 1))
+        scorep += max(0, (right[jdx] * (sz - 1)) - (rightp[jdx] * (sz - 2)))
+
+      right[idx], rightc[idx] = score, curr_count
+      rightp[idx] = scorep
+      stack.append(idx)
+
+      idx -= 1
+    
+    for idx in range(len(right)):
+      right[idx] -= (strength[idx] * rightc[idx])
+
+    total = 0
+    for c1, f1, c2, f2, n in zip(left, leftc, right, rightc, strength):
+      total += ((c1 * f2) + (c2 * f1)) * n
+
+    return total % mod
