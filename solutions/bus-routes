@@ -1,0 +1,37 @@
+class Solution:
+  def numBusesToDestination(self, routes: List[List[int]], source: int, target: int) -> int:
+    # We need to build a graph between the bus-stops
+    # The edges would represent the busses that travel between the bus-stops
+    # So a simple BFS would get us the least number of buses to reach target from source
+
+    # Worst case: 500 buses and 10**6 bus-stops
+    adj = defaultdict(lambda: [])
+    
+    for bus in range(len(routes)):
+      for route in routes[bus]:
+        adj[route].append(bus)
+    
+    # Perform bfs
+    dq = deque([source])
+    visited_b, visited_s = set(), set([source])
+    dist = 0
+
+    while dq:
+      sz = len(dq)
+      for _ in range(sz):
+        curr = dq.popleft()
+        if curr == target: return dist
+
+        # Find the routes reachable from current stop
+        for b in adj[curr]:
+          if b in visited_b: continue
+          visited_b.add(b)
+
+          for s in routes[b]:
+            if s in visited_s: continue
+            visited_s.add(s)
+            dq.append(s)
+      
+      dist += 1
+
+    return -1
